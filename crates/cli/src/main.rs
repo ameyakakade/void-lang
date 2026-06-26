@@ -198,14 +198,19 @@ fn compile_cmd(
     let asm_file = File::create(&asm_path)?;
     let mut asm_buf = BufWriter::new(&asm_file);
 
-    codegen::x86_64::emit(&mut asm_buf, &symbols)?;
+    if false {
+        codegen::x86_64_nasm::emit(&mut asm_buf, &symbols)?;
+    } else {
+        codegen::aarch64_darwin_gas::emit(&mut asm_buf, &symbols)?;
+    }
+    
 
     if matches!(emit, Emit::Assembly) {
         return Ok(());
     }
 
-    let mut cmd = Command::new("nasm");
-    cmd.args(&["-f", "elf64"]);
+    let mut cmd = Command::new("as");
+    cmd.args(&[""]);
     if debug {
         cmd.args(&["-g", "-F", "dwarf"]);
     }
@@ -213,7 +218,9 @@ fn compile_cmd(
 
     let status = cmd.status().expect("Failed to execute nasm");
 
-    fs::remove_file(&asm_path)?;
+    if false {
+        fs::remove_file(&asm_path)?;
+    }
 
     if !status.success() {
         process::exit(1);

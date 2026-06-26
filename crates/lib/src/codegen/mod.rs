@@ -4,7 +4,8 @@ use fxhash::FxHashMap;
 
 use crate::ir::Instruction;
 
-pub mod x86_64;
+pub mod x86_64_nasm;
+pub mod aarch64_darwin_gas;
 
 type Result<T> = std::result::Result<T, io::Error>;
 
